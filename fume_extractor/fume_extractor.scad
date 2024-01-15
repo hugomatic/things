@@ -10,7 +10,8 @@ screen_hole_dia = 76.2;
 screen_z = 0.5;
 screen_thick = 2; // 0.25;
 screen_hole_thick = 2.5;// 0.75;
-cross_thick = 5;
+cross_thick_y = 3;
+cross_thick_z = 15;
 
 tube_thick= 5;
 tube_height = 36;
@@ -104,8 +105,8 @@ module screen_positive() {
   cylinder(r=r, h=h);
 
   dx = screen_hole_dia - tube_thick;
-  dy = cross_thick;
-  dz = cross_thick;
+  dy = cross_thick_y;
+  dz = cross_thick_z;
 
   x = -screen_hole_dia/2;
   translate([0, 0, dz/2]) {
