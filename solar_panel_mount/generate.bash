@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cad="fume_extractor"
+cad="solar_panel_mount"
 views=("plate" "assembly")
 
 # we are assuming that a part.scad file exists in part directory
@@ -80,6 +80,6 @@ do
   echo -e "\noptions: $options\n" | tee -a $log
 
   echo '```' >> $log
-  time openscad $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
+  time /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
   echo '```' >> $log
 done

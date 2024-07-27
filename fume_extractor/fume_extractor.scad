@@ -8,8 +8,8 @@ revision_string = "1234567";
 // hole diameter (3 inches)
 screen_hole_dia = 76.2;
 screen_z = 0.5;
-screen_thick = 2; // 0.25;
-screen_hole_thick = 2.5;// 0.75;
+screen_thick = 1; // 0.25;
+screen_hole_thick = 1.5; // 0.75;
 cross_thick_y = 3;
 cross_thick_z = 15;
 
