@@ -188,13 +188,10 @@ module bolt_circle(x, y, d, hole_d, h) {
         translate([hole_x, hole_y, 0])
             cylinder(h, hole_d/2, hole_d/2);
     }
+
 }
 
-if (view == "arm") {
-  arm();
-}
-
-if (view == "plate") {
+module plate() {
     arm();
 
     translate([290, 280, 0])
@@ -210,9 +207,21 @@ if (view == "plate") {
          translate([0,-100,0]) lynch_pin();
       }
 
+
+}
+
+if (view == "arm") {
+  arm();
+}
+
+if (view == "plate") {
+  plate();
 }
 
 if (view == "assembly") {
   assembly();
 }
 
+if (view == "laser") {
+  projection(cut=true) plate();
+}

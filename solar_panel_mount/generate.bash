@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 cad="solar_panel_mount"
-views=("plate" "assembly" "laser")
+views=("plate" "assembly")
+views_2d=("laser")
 
 # we are assuming that a part.scad file exists in part directory
 # (if the scad file is not standalone, all depends should be put there too)
@@ -71,8 +72,12 @@ echo "git show $commit:$GIT_FOLDER/$SCAD_FILE" | tee -a $log
 echo '```' >> $log
 git show $commit:$GIT_FOLDER/$SCAD_FILE > /tmp/scad_doc.scad
 
-for view in "${viewss[@]}"
+echo "Views"
+
+for view in "${views[@]}"
 do
+  echo "view: $view"
+
   stl_file="${STL_PREFIX}_${view}_${commit}.stl"
   echo "## [$stl_file]($stl_file)" | tee -a $log
 
@@ -80,6 +85,27 @@ do
   echo -e "\noptions: $options\n" | tee -a $log
 
   echo '```' >> $log
-  time /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
+  time openscad $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
+  echo '```' >> $log
+done
+
+
+for view_2d in "${views_2d[@]}"
+do
+  echo "view_2d = *$view_2d*"
+  echo "commit = *$commit*"
+  echo "prefix = *$STL_PREFIX*"
+
+  options="-D revision_string=\"$commit\" -D view=\"$view_2d\""
+  echo "toto options = $options"
+
+  out_file="${STL_PREFIX}_${view_2d}_${commit}.svg"
+  echo "toto out_file = $out_file"
+
+
+  echo -e "\noptions: $options\n" | tee -a $log
+
+  echo '```' >> $log
+  time openscad $options -o $out_file /tmp/scad_doc.scad 2>&1 | tee -a $log
   echo '```' >> $log
 done
