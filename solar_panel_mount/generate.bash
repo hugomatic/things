@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cad="solar_panel_mount"
-views=("plate" "assembly")
+views=("plate" "assembly" "laser")
 
 # we are assuming that a part.scad file exists in part directory
 # (if the scad file is not standalone, all depends should be put there too)
@@ -59,7 +59,7 @@ echo "target_directory $target_directory"
 mkdir -p $target_directory
 cd $target_directory
 # remove any previous file
-rm /tmp/scad_doc.scad
+rm -f /tmp/scad_doc.scad
 
 
 # get the correct version of the cad file in the temp directory
