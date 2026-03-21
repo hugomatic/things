@@ -21,7 +21,8 @@ inner_h = 120;  // < 126
 
 // Frame thickness
 frame_margin = 15;
-frame_thickness = 6;
+frame_thickness = 1; // 6;
+screw_thickness = 0.5; // 3;
 corner_radius = 6;
 
 // Hole pattern (official portrait)
@@ -74,10 +75,17 @@ module frame_negative() {
 
         // mounting holes
         for (x = [-hole_x, hole_x], y = [-hole_y, hole_y]) {
-            translate([x, y, -0.1])
+            translate([x, y, -0.1]) {
                 cylinder(d = hole_d, h = frame_thickness + 0.2);
+                translate([0,0, 0 + screw_thickness])
+                    cylinder(d = hole_d * 2, h = frame_thickness + 0.2);
+            }
         }
     }
+    
+    translate([0, 68, frame_thickness])
+    write_text(revision_string);
+    
 }
 
 module frame() {
