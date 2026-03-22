@@ -1,4 +1,4 @@
-view = "assembly"; // [assembly, plate]
+view = "assembly"; // [assembly, tripod, camera_plate]
 
 letter_size = 6;
 revision_string = "1234567";
@@ -25,14 +25,14 @@ screw_thickness = 2; // 3;
 corner_radius = 6;
 
 // Hole pattern (official portrait)
-hole_d = 3.0;
-hole_x = 35; // 37.5;
+hole_d = 3.1;
+hole_x = 35.355; // 37.5;
 hole_y = 70;// 63.0;
 
 // position of the tripod mount
 elevator_y = 20;
 
-tripod_thick = 6;
+tripod_thick = 10;
 tripod_screw_thick = 2;
 
 // ==========================
@@ -175,14 +175,14 @@ if (view == "tripod") {
   tripod();
 }
 
-if (view == "plate") {
-  flat("part");
+if (view == "camera_plate") {
+  // flat("part");
+  camera_plate();  
 }
 
 
 if (view == "assembly") { 
-  // camera_plate();
-    
+   echo("asda"); 
    translate([0, -85 -elevator_y, 15])rotate([-90,0,0]) tripod();
    frame();
 }
