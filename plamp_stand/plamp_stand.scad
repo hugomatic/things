@@ -146,8 +146,8 @@ module tripod() {
     translate([0,0,0]) {
         difference() {
             translate([-cube_x/2,-10, 0]) cube([cube_x, 25, tripod_thick]);
-            translate([0, 0, -1]) cylinder(h = tripod_thick +1, d = 5);
-            translate([0, 0, tripod_screw_thick]) cylinder(h = tripod_thick + 1, d = 12, $fn = 6);
+            translate([0, 0, -1]) cylinder(h = tripod_thick +1, d = 7);
+            translate([0, 0, tripod_screw_thick]) cylinder(h = tripod_thick + 1, d = 14, $fn = 6);
         }
         translate([0, 0, - elevator_y /2])
         translate([(-cube_x )/2,  15 - frame_thickness, 10]) cube([cube_x , frame_thickness, elevator_y +10]);
