@@ -120,8 +120,9 @@ module camera_clip(){
     clip_y = 0;
     clip_z = 0;
     
-    clip_thick = 2;
-    clip_gap = 1;
+    clip_thick = 6;
+    clip_gap_s = 1;
+    clip_gap_c = 1;
     
     dz = 20; 
     dy = 20;
@@ -138,12 +139,12 @@ module camera_clip(){
     translate([clip_x, clip_y, clip_z]) cube(clip_base_dxyz);
     translate([clip_x + clip_thick, clip_y, clip_z]) cube(clip_screen_dxyz); 
     
-    translate([clip_x + clip_thick + clip_gap, clip_y, clip_z]) cube(clip_base_dxyz);
-    translate([clip_x + clip_thick * 2 + clip_gap, clip_y, clip_z]) cube(clip_cable_dxyz);    
+    translate([clip_x + clip_thick + clip_gap_s, clip_y, clip_z]) cube(clip_base_dxyz);
+    translate([clip_x + clip_thick * 2 + clip_gap_s, clip_y, clip_z]) cube(clip_cable_dxyz);    
     
-    translate([clip_x + clip_thick * 2 + clip_gap * 2, clip_y, clip_z]) cube(clip_base_dxyz);
+    translate([clip_x + clip_thick * 2 + clip_gap_s + clip_gap_c, clip_y, clip_z]) cube(clip_base_dxyz);
     
-    translate([clip_thick/2 + clip_gap * 2 + clip_thick * 2 , dy +1, 0]) cylinder(d=  2 *clip_thick, h = dz);
+    translate([clip_thick/2 + clip_gap_s + clip_gap_c + clip_thick * 2 , dy +1, 0]) cylinder(d=  1.25 * clip_thick, h = dz);
 
 }
 

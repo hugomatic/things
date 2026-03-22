@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cad="plamp_stand"
-views=("assembly" "plate")
+views=("assembly" "plate" "camera_clip")
 
 # we are assuming that a part.scad file exists in part directory
 # (if the scad file is not standalone, all depends should be put there too)
