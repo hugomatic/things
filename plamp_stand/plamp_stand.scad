@@ -189,7 +189,7 @@ if (view == "camera_plate") {
 
 
 if (view == "assembly") { 
-   echo("asda"); 
+   echo("assmenbly view"); 
    translate([0, -85 -elevator_y, 15])rotate([-90,0,0]) tripod();
    frame();
 }
