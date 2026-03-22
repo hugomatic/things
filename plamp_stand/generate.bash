@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cad="plamp_stand"
-views=("plate" "assembly")
+views=("assembly" "plate")
 
 # we are assuming that a part.scad file exists in part directory
 # (if the scad file is not standalone, all depends should be put there too)
@@ -68,18 +68,25 @@ date | tee -a $log
 echo "get the source CAD:" | tee -a $log
 echo '```' >> $log
 echo "git show $commit:$GIT_FOLDER/$SCAD_FILE" | tee -a $log
+
+
 echo '```' >> $log
 git show $commit:$GIT_FOLDER/$SCAD_FILE > /tmp/scad_doc.scad
 
-for view in "${viewss[@]}"
+
+for view in "${views[@]}"
 do
+
   stl_file="${STL_PREFIX}_${view}_${commit}.stl"
   echo "## [$stl_file]($stl_file)" | tee -a $log
 
   options="-D revision_string=\"$commit\" -D view=\"$view\" -D ball_quality=64"
   echo -e "\noptions: $options\n" | tee -a $log
 
+  echo "toto $view"
+
   echo '```' >> $log
-  time /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
+  # time /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
+  time openscad $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
   echo '```' >> $log
 done

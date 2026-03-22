@@ -1,4 +1,3 @@
-$fn = 64;
 view = "assembly"; // [assembly, plate]
 
 letter_size = 6;
@@ -27,8 +26,14 @@ corner_radius = 6;
 
 // Hole pattern (official portrait)
 hole_d = 3.0;
-hole_x = 37.5;
-hole_y = 63.0;
+hole_x = 35; // 37.5;
+hole_y = 70;// 63.0;
+
+// position of the tripod mount
+elevator_y = 20;
+
+tripod_thick = 2;
+tripod_screw_thick = 0.1;
 
 // ==========================
 // DERIVED
@@ -82,10 +87,10 @@ module frame_negative() {
             }
         }
     }
-    
+
     translate([0, 68, frame_thickness])
     write_text(revision_string);
-    
+
 }
 
 module frame() {
@@ -99,9 +104,26 @@ module frame() {
 // OUTPUT
 // ==========================
 
-frame();
 
 
+
+module tripod() {
+   
+    
+    cube_x = 40;
+    translate([0,0,0]) {
+        difference() {
+            translate([-cube_x/2,-10, 0]) cube([cube_x, 25, tripod_thick]);
+            translate([0, 0, -1]) cylinder(h = tripod_thick +1, d = 5);
+            translate([0, 0, tripod_screw_thick]) cylinder(h = tripod_thick + 1, d = 11, $fn = 6);
+        }
+        translate([0, 0, - elevator_y /2])
+        translate([(-cube_x )/2,  15 - frame_thickness, 10]) cube([cube_x , frame_thickness, elevator_y +10]);
+    }
+    
+
+    
+}
 
 
 module write_text(string) {
@@ -117,8 +139,8 @@ module write_text(string) {
         }
     }
 }
-if (view == "part") {
-  part();
+if (view == "tripod") {
+  tripod();
 }
 
 if (view == "plate") {
@@ -126,7 +148,11 @@ if (view == "plate") {
 }
 
 
-if (view == "assembly") {
+if (view == "assembly") { 
+  //tripod();
+    
+  translate([0, -85 -elevator_y, 15])rotate([-90,0,0]) tripod();
   frame();
 }
+
 
