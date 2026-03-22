@@ -1,6 +1,6 @@
 view = "assembly"; // [assembly, tripod, camera_plate]
 
-letter_size = 6;
+letter_size = 7;
 revision_string = "1234567";
 
 
