@@ -20,8 +20,8 @@ inner_h = 120;  // < 126
 
 // Frame thickness
 frame_margin = 15;
-frame_thickness = 1; // 6;
-screw_thickness = 0.5; // 3;
+frame_thickness = 6; // 6;
+screw_thickness = 2; // 3;
 corner_radius = 6;
 
 // Hole pattern (official portrait)
@@ -32,8 +32,8 @@ hole_y = 70;// 63.0;
 // position of the tripod mount
 elevator_y = 20;
 
-tripod_thick = 2;
-tripod_screw_thick = 0.1;
+tripod_thick = 6;
+tripod_screw_thick = 2;
 
 // ==========================
 // DERIVED
@@ -103,6 +103,38 @@ module frame() {
 // ==========================
 // OUTPUT
 // ==========================
+module camera_plate(
+    hole_dx = 21,
+    hole_dy = 12.5,
+    hole_d = 2.2,
+    plate_w = 30,
+    plate_h = 30,
+    plate_t = 3,
+    standoff_od = 5.0,
+    standoff_h = 4.0
+) {
+    difference() {
+        union() {
+            // base plate
+            translate([-plate_w/2, -plate_h/2, 0])
+                cube([plate_w, plate_h, plate_t]);
+
+            // standoff tubes above the plate
+            for (x = [-hole_dx/2, hole_dx/2],
+                 y = [-hole_dy/2, hole_dy/2]) {
+                translate([x, y, plate_t])
+                    cylinder(d = standoff_od, h = standoff_h);
+            }
+        }
+
+        // through holes through both plate and standoffs
+        for (x = [-hole_dx/2, hole_dx/2],
+             y = [-hole_dy/2, hole_dy/2]) {
+            translate([x, y, -0.1])
+                cylinder(d = hole_d, h = plate_t + standoff_h + 0.2);
+        }
+    }
+}
 
 
 
@@ -149,10 +181,10 @@ if (view == "plate") {
 
 
 if (view == "assembly") { 
-  //tripod();
+  // camera_plate();
     
-  translate([0, -85 -elevator_y, 15])rotate([-90,0,0]) tripod();
-  frame();
+   translate([0, -85 -elevator_y, 15])rotate([-90,0,0]) tripod();
+   frame();
 }
 
 
