@@ -1,4 +1,4 @@
-view = "assembly"; // [assembly, tripod, camera_plate]
+view = "assembly"; // [assembly, tripod, camera_clip, plate]
 
 letter_size = 7;
 revision_string = "1234567";
@@ -112,37 +112,39 @@ module frame() {
 // ==========================
 // OUTPUT
 // ==========================
-module camera_plate(
-    hole_dx = 21,
-    hole_dy = 12.5,
-    hole_d = 2.2,
-    plate_w = 30,
-    plate_h = 30,
-    plate_t = 3,
-    standoff_od = 5.0,
-    standoff_h = 4.0
-) {
-    difference() {
-        union() {
-            // base plate
-            translate([-plate_w/2, -plate_h/2, 0])
-                cube([plate_w, plate_h, plate_t]);
+module camera_clip(){
+    
+    echo("camera clip");
+    
+    clip_x = 0;
+    clip_y = 0;
+    clip_z = 0;
+    
+    clip_thick = 2;
+    clip_gap = 1;
+    
+    dz = 20; 
+    dy = 20;
+    
+    // we can cover this much
+    screen_z = 12;
+    
+    cable_w = 16;
+    
+    clip_base_dxyz = [clip_thick, dy, dz];
+    clip_screen_dxyz = [clip_thick, dy, dz - screen_z];
+    clip_cable_dxyz = [clip_thick, dy - cable_w, dz];
+    
+    translate([clip_x, clip_y, clip_z]) cube(clip_base_dxyz);
+    translate([clip_x + clip_thick, clip_y, clip_z]) cube(clip_screen_dxyz); 
+    
+    translate([clip_x + clip_thick + clip_gap, clip_y, clip_z]) cube(clip_base_dxyz);
+    translate([clip_x + clip_thick * 2 + clip_gap, clip_y, clip_z]) cube(clip_cable_dxyz);    
+    
+    translate([clip_x + clip_thick * 2 + clip_gap * 2, clip_y, clip_z]) cube(clip_base_dxyz);
+    
+    translate([clip_thick/2 + clip_gap * 2 + clip_thick * 2 , dy +1, 0]) cylinder(d=  2 *clip_thick, h = dz);
 
-            // standoff tubes above the plate
-            for (x = [-hole_dx/2, hole_dx/2],
-                 y = [-hole_dy/2, hole_dy/2]) {
-                translate([x, y, plate_t])
-                    cylinder(d = standoff_od, h = standoff_h);
-            }
-        }
-
-        // through holes through both plate and standoffs
-        for (x = [-hole_dx/2, hole_dx/2],
-             y = [-hole_dy/2, hole_dy/2]) {
-            translate([x, y, -0.1])
-                cylinder(d = hole_d, h = plate_t + standoff_h + 0.2);
-        }
-    }
 }
 
 
@@ -178,20 +180,36 @@ module write_text(string) {
         }
     }
 }
+
+module rpi_holder () {
+   translate([0, -85 -elevator_y, 15])rotate([-90,0,0]) tripod();
+   frame();
+    
+}
+
+echo(["view", view]); 
+
+if (view == "plate") {
+  camera_clip();
+  rpi_holder();
+}
+
 if (view == "tripod") {
   tripod();
 }
 
-if (view == "camera_plate") {
+if (view == "camera_clip") {
   // flat("part");
-  camera_plate();  
+  camera_clip();  
 }
+
 
 
 if (view == "assembly") { 
    echo("assmenbly view"); 
-   translate([0, -85 -elevator_y, 15])rotate([-90,0,0]) tripod();
-   frame();
+   
+    rpi_holder();
+    camera_clip();
 }
 
 
