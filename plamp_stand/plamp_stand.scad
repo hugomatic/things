@@ -25,9 +25,9 @@ screw_thickness = 2; // 3;
 corner_radius = 6;
 
 // Hole pattern (official portrait)
-hole_d = 3.1;
+hole_d = 3.5;
 hole_x = 35.355; // 37.5;
-hole_y = 70;// 63.0;
+hole_y = 70; // 63.0;
 
 // position of the tripod mount
 elevator_y = 30;
@@ -90,6 +90,15 @@ module frame_negative() {
 
     translate([0, 68, frame_thickness])
     write_text(revision_string);
+    
+    // connectors
+    con_dx = frame_margin *2;
+    con_dy = 60; 
+    con_dz = frame_thickness * 2;
+    con_x = -(inner_w + con_dx + frame_thickness ) /2 ;
+    con_y = -10;
+    con_z = 2;
+    translate([con_x, con_y, con_z]) cube([con_dx, con_dy, con_dz]);
 
 }
 
@@ -140,8 +149,6 @@ module camera_plate(
 
 
 module tripod() {
-   
-    
     cube_x = 40;
     translate([0,0,0]) {
         difference() {
