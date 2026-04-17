@@ -8,6 +8,10 @@ part_dx = 780;
 part_dy = 40;
 part_dz = 2;
 
+comb_dx = 2;
+comb_dy = 50;
+comb_dz = 1;
+comb_gap = 0.25;
 
 hole4_x = 750;
 hole3_x = 525;
@@ -15,78 +19,6 @@ hole2_x = 275;
 hole1_x = 45;
 
 holes_x = [part_dx - hole4_x, part_dx - hole3_x, part_dx - hole2_x, part_dx -hole1_x];
-
-dovetail_h = 60;
-dovetail_size = dovetail_h /4;
-dovetail_ratio = 1.4;
-dovetail_rounding = dovetail_size /5;
-dovetail_gap = 0.2;
-
-
-
-module tooth() intersection() {
-    $fn=160;
-    translate([0, dovetail_gap/2])
-    // STEP 3: Quad offset
-    // external
-    offset(dovetail_rounding) offset(-dovetail_rounding)
-    // internal
-    offset(-dovetail_rounding) offset(dovetail_rounding)
-    // adding dovetail_rounding to sides to cancel radius when looping
-    // STEP 1
-    polygon([
-        [-dovetail_size - dovetail_rounding, -dovetail_size/2], // left shoulder
-        [-dovetail_size/2  * (2-dovetail_ratio), -dovetail_size/2], // left neck
-        // STEP 2 (dovetail_ratio)
-        [-dovetail_size*dovetail_ratio/2, dovetail_size/2], // left ear
-        [dovetail_size*dovetail_ratio/2, dovetail_size/2], // right ear
-        [dovetail_size/2 * (2-dovetail_ratio), -dovetail_size/2], // right neck
-
-        [dovetail_size + dovetail_rounding, -dovetail_size/2], // right shoulder
-        [dovetail_size + dovetail_rounding, -dovetail_size*2], // right bottom
-        [-dovetail_size - dovetail_rounding, -dovetail_size*2], // left bottom
-    ]);
-
-    // shave off the rounded bit of the shoulders
-    translate([-dovetail_size, -dovetail_size*4]) square([dovetail_size*2, dovetail_size*5]);
-}
-
-
-module tooth_cut() difference() {
-    // STEP 4
-    tooth();
-    offset(-dovetail_gap) tooth();
-    // STEP 5
-    translate([-dovetail_size*2, -dovetail_size*5 - dovetail_size/2 - dovetail_gap/2, 0]) square([dovetail_size*4, dovetail_size*5]);
-}
-
-
-// this is done in 3D rather than 2D to allow for a taper -- this way the fit
-// tightens as the teeth are pushed in, and the glue is squeezed instead of
-// scraped
- module tooth_cut_3d() difference() {
-    translate([dovetail_size, 0, -1])
-    // STEP 6 & 7
-    linear_extrude(dovetail_h, scale=dovetail_ratio, convexity=3)
-    tooth_cut();
-    // STEP 8
-    // difference is used to constrain the edges to prevent overlap
-    // I tried intersection (to do it in one pass) but performance TANKED!
-    translate([-dovetail_size*2-0.01,-dovetail_size, -1]) linear_extrude(dovetail_h+2) square([dovetail_size*2, dovetail_size*2]);
-    translate([dovetail_size*2+0.01,-dovetail_size, -1]) linear_extrude(dovetail_h+2) square([dovetail_size*2, dovetail_size*2]);
-}
-
-// will get at least length
-module teeth_cut_3d(length) {
-    n = ceil(length / (dovetail_size*2))+2;
-    real_length = n * dovetail_size*2;
-
-    // STEP 9
-    for (i=[0:n-1])
-        translate([i*dovetail_size*2 - real_length/2, 0]) tooth_cut_3d();
-
-}
-
 
 module write_text(string) {
     z0 = - 0.25;
@@ -102,6 +34,15 @@ module write_text(string) {
     }
 }
 
+module comb_along_x(dx, comb_dx, comb_dy, comb_dz, comb_gap) {
+    pitch = comb_dx + comb_gap;
+    n = floor((dx + comb_gap) / pitch);
+
+    for (i = [0 : n ]) {
+        translate([i * pitch, 0, 0])
+            cube([comb_dx, comb_dy, comb_dz]);
+    }
+}
 
 module door_sweep_positive(i){
 
@@ -130,6 +71,12 @@ module door_sweep_positive(i){
   if (i==2)translate([x, y, z] ) cube([tab_dx, tab_dy, tab_dz]);
   if ((i == 0) || (i == 2)) translate([x + dx, y, z] ) cube([tab_dx, tab_dy, tab_dz]);
 
+  // comb section
+  translate([dx * i, -comb_dy,0])
+    comb_along_x(dx, comb_dx, comb_dy, comb_dz, comb_gap);
+
+
+
 
 
 }
@@ -144,11 +91,11 @@ module holes_4(holes_x, r=2, y=0, z=0) {
 module door_sweep_negative(i) {
 
   cut_dx = part_dx /4;
-  // translate([1 * cut_dx, 0, 0]) rotate([0,0,90])teeth_cut_3d(300);
-  // translate([2 * cut_dx, 0, 0]) rotate([0,0,90])teeth_cut_3d(300);
-  // translate([3 * cut_dx, 0, 0]) rotate([0,0,90])teeth_cut_3d(300);
 
-  translate([i * cut_dx + cut_dx/2, 0, part_dz]) write_text(revision_string);
+  tx = i * cut_dx + cut_dx/2;
+  translate([tx, 0, part_dz]) write_text(revision_string);
+
+  translate([tx, 10, part_dz]) write_text(str(i+1));
 
   tab_dx = 30;
   tab_dy = part_dy/3;
@@ -195,7 +142,7 @@ if (view == "assembly") {
 
 if (view == "plate") {
     for (i = [0:3]) {
-        translate([0, i * 100, 0])  door_sweep(i);
+        translate([i * -part_dx /4, i * 100, 0])  door_sweep(i);
     }
 
 }

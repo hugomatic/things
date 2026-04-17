@@ -80,6 +80,6 @@ do
   echo -e "\noptions: $options\n" | tee -a $log
 
   echo '```' >> $log
-  time /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
+  time openscad $options --export-format asciistl -o $stl_file /tmp/scad_doc.scad 2>&1 | tee -a $log
   echo '```' >> $log
 done
