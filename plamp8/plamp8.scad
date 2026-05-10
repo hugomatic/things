@@ -12,7 +12,7 @@ corner_r = 6;
 hole_d = 34;        // source cylinder diameter
 hole_h = 24;        // final vertical height after trimming
 hole_depth = 10;    // taller than plate_t for clean boolean
-
+cut_off_y = 1;
 outlet_spacing = 42;
 
 screw_d = 4;
@@ -24,15 +24,14 @@ write_t = 0.75;
 revision_string = "1234567";
 
 
-
-module write_text(string) {
+module write_text(string, font_size=letter_size) {
     z0 = -0.25;
     dz= write_t;
     translate([0, 0, z0]) {
         rotate([0,0,0]) {
             linear_extrude(dz) {
                 font = "DejaVu Sans";
-                text(string, size = letter_size, font = font,
+                text(string, size = font_size, font = font,
                      halign = "center", valign = "center", $fn = 64);
             }
         }
@@ -65,16 +64,10 @@ module part() {
   }
 }
 
-module flat(part_name, x=0, y=0, angle=0) {
-  if (part_name == "part") {
-    rotate([180,0,0]) part();
-  }
-}
-
 
 // ---------------- positive modules ----------------
 
-module positive_plate_round() {
+module outlet_cover_positive_round() {
     // simple rounded-ish rectangular 3D plate
     hull() {
         for (x = [-plate_w/2 + corner_r, plate_w/2 - corner_r])
@@ -84,7 +77,7 @@ module positive_plate_round() {
     }
 }
 
-module positive_plate() {
+module outlet_cover_positive() {
     translate([-plate_w/2, -plate_h/2, 0])
         cube([plate_w, plate_h, plate_t]);
 }
@@ -100,7 +93,7 @@ module negative_roundish_outlet() {
     */
 
     extra = 20;
-    cut_y = hole_h / 2;
+    cut_y = hole_h / 2 + cut_off_y;
 
     difference() {
         // vertical cutting solid
@@ -118,6 +111,19 @@ module negative_roundish_outlet() {
 
 }
 
+module negative_plate_writings() {
+
+
+    rev_x = 0;
+    rev_y = 0;
+    rev_z = plate_t;
+
+    translate([rev_x, rev_y, rev_z])
+      rotate([0,0,0])
+        write_text(revision_string, 4);
+
+}
+
 module negative_screw_hole() {
     translate([0, 0, -hole_depth/2])
         cylinder(h = hole_depth, d = screw_d);
@@ -126,7 +132,7 @@ module negative_screw_hole() {
 
 // ---------------- subtraction module ----------------
 
-module subtract_cover_holes() {
+module outlet_cover_negative() {
     // outlet openings
     for (y = [-outlet_spacing/2, outlet_spacing/2])
         translate([0, y, plate_t/2])
@@ -136,10 +142,7 @@ module subtract_cover_holes() {
     for (y = [-screw_spacing/2, screw_spacing/2])
         translate([0, y, plate_t/2])
             negative_screw_hole();
-
-    translate([0,0, plate_t])
-      rotate([0,0,0])
-        write_text(revision_string);
+    negative_plate_writings();
 }
 
 
@@ -147,8 +150,8 @@ module subtract_cover_holes() {
 
 module outlet_cover() {
     difference() {
-        positive_plate();
-        subtract_cover_holes();
+        outlet_cover_positive();
+        outlet_cover_negative();
     }
 }
 
